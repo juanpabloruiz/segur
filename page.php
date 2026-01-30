@@ -9,9 +9,11 @@ while ($row = $res->fetch_assoc()):
 ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#id<?= $row['id'] ?>">
-        <div style="border: 1px solid;">
+    <div class="card">    
+<img src="/files/<?= $row['file'] ?>" alt="">
+<div class="card-body">
             <?= $row['name'] ?>
-            <img src="/files/<?= $row['file'] ?>" alt="">
+            
             <?php
             $id = $row['id'];
             $stmt_rec = $conn->prepare("SELECT * FROM records WHERE id_user = ?");
@@ -22,7 +24,10 @@ while ($row = $res->fetch_assoc()):
             ?>
             <?= $row_rec['mode'] ?>
             <?php endwhile ?>
+            </div>
         </div>
+        
+
     </a>
 
 <?php include 'modal.php' ?>
