@@ -7,3 +7,4 @@ error_reporting(E_ALL);
 
 $conn = new mysqli('localhost', 'user', 'password', 'db');
 $conn->set_charset('utf8mb4');
+date_default_timezone_set('America/Argentina/Buenos_Aires');
