@@ -1,0 +1,12 @@
+a {
+    text-decoration: none;
+}
+
+.caard-img-top {
+    height: 250px;
+    object-fit: cover;
+}
+
+.card {
+    cursor: pointer;
+}
