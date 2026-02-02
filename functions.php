@@ -25,3 +25,22 @@ function tiempo_transcurrido($fecha)
 
     return "Hace " . floor($diferencia / 12) . " años";
 }
+
+function abreviarApellido($apellido, $max = 14) {
+    $apellido = trim($apellido);
+
+    if (mb_strlen($apellido) <= $max) {
+        return $apellido;
+    }
+
+    $partes = preg_split('/\s+/', $apellido);
+
+    $resultado = $partes[0];
+
+    for ($i = 1; $i < count($partes); $i++) {
+        $resultado .= ' ' . mb_substr($partes[$i], 0, 1) . '.';
+    }
+
+    return $resultado;
+}
+

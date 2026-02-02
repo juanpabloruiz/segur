@@ -12,7 +12,7 @@ include 'functions.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Segur</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/estilo.css">
     <link rel="stylesheet" href="/fontawesome/css/all.min.css">
@@ -45,90 +45,102 @@ include 'functions.php';
     </nav>
 
 
-    <main class="container my-3">
-        <div class="row row-cols-1 row-cols-md-6 g-3">
+    <main class="container-fluid my-3">
+        <div class="d-flex">
 
-            <?php
-            $id = $_GET['id'];
-            $stmt = $conn->prepare("SELECT * FROM users WHERE id_rol = ?");
-            $stmt->bind_param('i', $id);
-            $stmt->execute();
-            $res = $stmt->get_result();
-            while ($row = $res->fetch_assoc()):
-            ?>
-                <div class="col">
+            <!-- IZQUIERDA: CARDS -->
+            <section>
+                <div class="container my-3">
+                    <div class="row row-cols-1 row-cols-md-6 g-3">
+
+                        <?php
+                        $id = $_GET['id'];
+                        $stmt = $conn->prepare("SELECT * FROM users WHERE id_rol = ? ORDER BY last_name ASC");
+                        $stmt->bind_param('i', $id);
+                        $stmt->execute();
+                        $res = $stmt->get_result();
+                        while ($row = $res->fetch_assoc()):
+                        ?>
+                            <div class="col">
+
+                                <div class="card border-4 h-100 <?= $row['state'] == 1 ? 'border-success bg-success-subtle' : 'border-secondary bg-seconday-subtle' ?>">
+
+                                    <a data-bs-toggle="modal" data-bs-target="#id<?= $row['id'] ?>">
+                                        <picture>
+                                            <source srcset="/files/<?= $row['file'] ?>" type="image/webp">
+                                            <img
+                                                src="/files/<?= $row['file'] ?>"
+                                                class="card-img-top"
+                                                style="<?= $row['state'] == 0 ? 'filter: grayscale(100%); opacity: .75;' : '' ?>"
+                                                alt="<?= htmlspecialchars($row['last_name']) ?>">
+                                        </picture>
+
+                                        <div class="card-header">
+                                            <h5 class="card-title text-uppercase fw-bold"><?= abreviarApellido($row['last_name']) ?></h5>
+                                            <?= $row['first_name'] ?>
+                                        </div>
+                                        <div class="card-body">
 
 
-                    <div class="card border-4 h-100 
-    <?= $row['state'] == 1 ? 'border-success bg-success-subtle' : 'border-secondary bg-seconday-subtle' ?>">
+                                            <p class="card-text">
 
-                        <a data-bs-toggle="modal" data-bs-target="#id<?= $row['id'] ?>">
-                            <picture>
-                                <source srcset="/files/<?= $row['file'] ?>" type="image/webp">
-                                <img
-                                    src="/files/<?= $row['file'] ?>"
-                                    class="card-img-top"
-                                    style="<?= $row['state'] == 0 ? 'filter: grayscale(100%); opacity: .75;' : '' ?>"
-                                    alt="<?= htmlspecialchars($row['last_name']) ?>">
-                            </picture>
 
-                            <div class="card-header">
-                                <h5 class="card-title text-uppercase fw-bold"><?= $row['last_name'] ?></h5>
-                                <?= $row['first_name'] ?>
+                                                <?= (int)$row['office'] === 0 ? '<i class="fa-solid fa-lock fa-lg"></i>' : '<i class="fa-solid fa-lock-open fa-lg"></i>' ?>
+
+
+                                                <?php
+                                                $id = $row['id'];
+                                                $stmt_rec = $conn->prepare("SELECT * FROM records WHERE id_user = ? AND DATE(added) = CURDATE() ORDER BY added ASC");
+                                                $stmt_rec->bind_param('i', $id);
+                                                $stmt_rec->execute();
+                                                $res_rec = $stmt_rec->get_result();
+                                                while ($row_rec = $res_rec->fetch_assoc()) {
+                                                    if ($row_rec['mode'] === 'E') {
+                                                        echo '<span class="text-success m-1 fw-bold">E</span>';
+                                                    } else {
+                                                        echo '<span class="text-danger m-1 fw-bold">S</span>';
+                                                    }
+                                                }
+                                                ?>
+                                            </p>
+                                        </div>
+                                        <?php
+                                        $stmt_last = $conn->prepare("SELECT mode, added FROM records WHERE id_user = ? AND DATE(added) = CURDATE() ORDER BY added DESC LIMIT 1");
+                                        $stmt_last->bind_param('i', $row['id']);
+                                        $stmt_last->execute();
+                                        $last = $stmt_last->get_result()->fetch_assoc();
+                                        ?>
+                                        <div class="card-footer">
+                                            <small class="text-body-secondary">
+                                                <?= $last
+                                                    ? tiempo_transcurrido($last['added'])
+                                                    : 'Sin movimientos hoy'
+                                                ?>
+                                            </small>
+                                        </div>
+
+
+
+                                    </a>
+                                </div>
+
+
+
                             </div>
-                            <div class="card-body">
+                            <?php include 'modal.php' ?>
+                        <?php endwhile ?>
 
-
-                                <p class="card-text">
-
-
-                                    <?= (int)$row['office'] === 0 ? '<i class="fa-solid fa-lock fa-lg"></i>' : '<i class="fa-solid fa-lock-open fa-lg"></i>' ?>
-
-
-                                    <?php
-                                    $id = $row['id'];
-                                    $stmt_rec = $conn->prepare("SELECT * FROM records WHERE id_user = ? AND DATE(added) = CURDATE() ORDER BY added ASC");
-                                    $stmt_rec->bind_param('i', $id);
-                                    $stmt_rec->execute();
-                                    $res_rec = $stmt_rec->get_result();
-                                    while ($row_rec = $res_rec->fetch_assoc()) {
-                                        if ($row_rec['mode'] === 'E') {
-                                            echo '<span class="text-success m-1 fw-bold">E</span>';
-                                        } else {
-                                            echo '<span class="text-danger m-1 fw-bold">S</span>';
-                                        }
-                                    }
-                                    ?>
-                                </p>
-                            </div>
-                            <?php
-                            $stmt_last = $conn->prepare("SELECT mode, added FROM records WHERE id_user = ? AND DATE(added) = CURDATE() ORDER BY added DESC LIMIT 1");
-                            $stmt_last->bind_param('i', $row['id']);
-                            $stmt_last->execute();
-                            $last = $stmt_last->get_result()->fetch_assoc();
-                            ?>
-                            <div class="card-footer">
-                                <small class="text-body-secondary">
-                                    <?= $last
-                                        ? tiempo_transcurrido($last['added'])
-                                        : 'Sin movimientos hoy'
-                                    ?>
-                                </small>
-                            </div>
-
-
-
-                        </a>
                     </div>
+            </section>
 
-
-
-                </div>
-                <?php include 'modal.php' ?>
-            <?php endwhile ?>
+            <!-- DERECHA: SIDEBAR (lo que sobra) -->
+    <aside class="flex-grow-1">
+      <div class="h-100 p-3 bg-light">
+        Sidebar
+      </div>
+    </aside>
 
         </div>
-
 
     </main>
 
