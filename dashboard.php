@@ -46,7 +46,7 @@ include 'functions.php';
 
 
     <main class="container-fluid my-3">
-        <div class="d-flex">
+        <div class="d-flex flex-column flex-lg-row">
 
             <!-- IZQUIERDA: CARDS -->
             <section>
