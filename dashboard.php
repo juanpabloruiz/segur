@@ -1,10 +1,7 @@
 <?php
-include 'conn.php';
-include 'functions.php';
-
-
+require_once 'conn.php';
+require_once 'functions.php';
 ?>
-
 
 <!DOCTYPE html>
 <html lang="es">
@@ -14,13 +11,13 @@ include 'functions.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Segur</title>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/estilo.css">
+    <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/fontawesome/css/all.min.css">
 </head>
 
-
 <body data-bs-theme="dark">
 
+    <!-- Nav -->
     <nav class="navbar bg-dark navbar-expand-lg border-bottom" data-bs-theme="dark">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Segur</a>
@@ -44,15 +41,13 @@ include 'functions.php';
         </div>
     </nav>
 
-
     <main class="container-fluid my-3">
+
         <div class="d-flex flex-column flex-lg-row">
 
-            <!-- IZQUIERDA: CARDS -->
             <section>
                 <div class="container my-3">
                     <div class="row row-cols-1 row-cols-md-6 g-3">
-
                         <?php
                         $id = $_GET['id'];
                         $stmt = $conn->prepare("SELECT * FROM users WHERE id_rol = ? ORDER BY last_name ASC");
@@ -62,33 +57,24 @@ include 'functions.php';
                         while ($row = $res->fetch_assoc()):
                         ?>
                             <div class="col">
-
                                 <div class="card border-4 h-100 custom-card <?= $row['state'] == 1 ? 'border-success bg-success-subtle' : 'border-secondary bg-seconday-subtle' ?>">
-
                                     <a data-bs-toggle="modal" data-bs-target="#id<?= $row['id'] ?>">
                                         <picture>
                                             <source srcset="/files/<?= $row['file'] ?>" type="image/webp">
-                                            <img
-                                                src="/files/<?= $row['file'] ?>"
-                                                class="card-img-top"
-                                                style="<?= $row['state'] == 0 ? 'filter: grayscale(100%); opacity: .75;' : '' ?>"
-                                                alt="<?= htmlspecialchars($row['last_name']) ?>">
+                                            <img src="/files/<?= $row['file'] ?>" class="card-img-top" style="<?= $row['state'] == 0 ? 'filter: grayscale(100%); opacity: .75;' : '' ?>" loading="lazy" decoding="async" alt="<?= htmlspecialchars($row['last_name']) ?>">
                                         </picture>
-
                                         <div class="card-header">
-                                            <h5 class="card-title text-uppercase fw-bold"><?= abreviarApellido($row['last_name']) ?></h5>
+                                            <h5 class="card-title text-uppercase fw-bold mb-1"><?= abreviarApellido($row['last_name']) ?></h5>
                                             <?= $row['first_name'] ?>
                                         </div>
                                         <div class="card-body">
-
-
                                             <p class="card-text">
-
-
-                                                <?= (int)$row['office'] === 0 ? '<i class="fa-solid fa-lock fa-lg"></i>' : '<i class="fa-solid fa-lock-open fa-lg"></i>' ?>
-
-
                                                 <?php
+                                                if ((int)$row['office'] === 0) {
+                                                    echo '<i class="fa-solid fa-lock fa-lg text-danger" title="Oficina cerrada"></i>';
+                                                } else {
+                                                    echo '<i class="fa-solid fa-lock-open fa-lg text-success" title="Oficina abierta"></i>';
+                                                }
                                                 $id = $row['id'];
                                                 $stmt_rec = $conn->prepare("SELECT * FROM records WHERE id_user = ? AND DATE(added) = CURDATE() ORDER BY added ASC");
                                                 $stmt_rec->bind_param('i', $id);
@@ -118,37 +104,28 @@ include 'functions.php';
                                                 ?>
                                             </small>
                                         </div>
-
-
-
                                     </a>
                                 </div>
-
-
-
                             </div>
                             <?php include 'modal.php' ?>
                         <?php endwhile ?>
-
                     </div>
             </section>
 
-            <!-- DERECHA: SIDEBAR (lo que sobra) -->
-    <aside class="flex-grow-1">
-      <div class="h-100 p-3 bg-light">
-        Sidebar
-      </div>
-    </aside>
+            <aside class="flex-grow-1">
+                <div class="h-100 my-3">
+                    <form method="POST" action="record.php">
+                        <textarea name="observation" class="form-control" id="">Observaciones del día...</textarea>
+                    </form>
+                </div>
+            </aside>
 
         </div>
 
     </main>
 
-
-
-
-
     <script src="/js/bootstrap.bundle.min.js"></script>
+
 </body>
 
 </html>

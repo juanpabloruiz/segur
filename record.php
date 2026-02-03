@@ -1,29 +1,47 @@
 <?php
 include 'conn.php';
 
-$id_user = (int) $_POST['id_user'];
-$mode    = $_POST['mode'];
+/* ===== MOVIMIENTOS (Entrada / Salida) ===== */
+if (isset($_POST['id_user'], $_POST['mode'])) {
 
-if (!in_array($mode, ['E', 'S'])) {
-    die('Movimiento inválido');
+    $id_user = (int) $_POST['id_user'];
+    $mode    = $_POST['mode'];
+
+    if (!in_array($mode, ['E', 'S'])) {
+        die('Movimiento inválido');
+    }
+
+    // 1 = presente, 0 = ausente
+    $state = ($mode === 'E') ? 1 : 0;
+
+    /* INSERT en records */
+    $stmt = $conn->prepare(
+        "INSERT INTO records (id_user, mode) VALUES (?, ?)"
+    );
+    $stmt->bind_param('is', $id_user, $mode);
+    $stmt->execute();
+
+    /* UPDATE en users */
+    $stmt = $conn->prepare(
+        "UPDATE users SET state = ? WHERE id = ?"
+    );
+    $stmt->bind_param('ii', $state, $id_user);
+    $stmt->execute();
 }
 
-// 1 = presente, 0 = ausente
-$state = ($mode === 'E') ? 1 : 0;
+/* ===== OFFICE (Candado) ===== */
+if (isset($_POST['id'], $_POST['office'])) {
 
-/* INSERT en records */
-$stmt = $conn->prepare(
-    "INSERT INTO records (id_user, mode) VALUES (?, ?)"
-);
-$stmt->bind_param('is', $id_user, $mode);
-$stmt->execute();
+    $id = (int) $_POST['id'];
+    $office = (int) $_POST['office'];
 
-/* UPDATE en users */
-$stmt = $conn->prepare(
-    "UPDATE users SET state = ? WHERE id = ?"
-);
-$stmt->bind_param('ii', $state, $id_user);
-$stmt->execute();
+    /* UPDATE en office */
+    $stmt = $conn->prepare(
+        "UPDATE users SET office = ? WHERE id = ?"
+    );
+    $stmt->bind_param('ii', $office, $id);
+    $stmt->execute();
+}
 
 header('Location: ' . $_SERVER['HTTP_REFERER']);
 exit;
