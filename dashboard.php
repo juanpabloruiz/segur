@@ -63,7 +63,7 @@ include 'functions.php';
                         ?>
                             <div class="col">
 
-                                <div class="card border-4 h-100 <?= $row['state'] == 1 ? 'border-success bg-success-subtle' : 'border-secondary bg-seconday-subtle' ?>">
+                                <div class="card border-4 h-100 custom-card <?= $row['state'] == 1 ? 'border-success bg-success-subtle' : 'border-secondary bg-seconday-subtle' ?>">
 
                                     <a data-bs-toggle="modal" data-bs-target="#id<?= $row['id'] ?>">
                                         <picture>
