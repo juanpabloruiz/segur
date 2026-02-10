@@ -57,7 +57,7 @@ require_once 'functions.php';
                         while ($row = $res->fetch_assoc()):
                         ?>
                             <div class="col">
-                                <div class="card border-4 h-100 custom-card <?= $row['state'] == 1 ? 'border-success bg-success-subtle' : 'border-secondary bg-seconday-subtle' ?>">
+                                <div class="card border-4 h-100 custom-card <?= $row['state'] == 1 ? 'border-success bg-success-subtle' : 'border-secondary bg-secondary-subtle' ?>">
                                     <a data-bs-toggle="modal" data-bs-target="#id<?= $row['id'] ?>">
                                         <picture>
                                             <source srcset="/files/<?= $row['file'] ?>" type="image/webp">

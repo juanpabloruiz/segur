@@ -15,7 +15,7 @@
             <!-- Foto de perfil -->
             <picture>
                 <source srcset="/files/<?= $row['file'] ?>" type="image/webp">
-                <img src="/files/<?= $row['file'] ?>" class="img-fluif rounded-circle w-50 d-block mx-auto my-3" loading="lazy" decoding="async" alt="<?= htmlspecialchars($row['last_name']) ?>">
+                <img src="/files/<?= $row['file'] ?>" class="img-fluid rounded-circle w-50 d-block mx-auto my-3" loading="lazy" decoding="async" alt="<?= htmlspecialchars($row['last_name']) ?>">
             </picture>
 
             <div class="modal-body text-center">
